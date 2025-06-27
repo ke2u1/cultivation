@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dao of Benefits</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #191919;
+        --card-bg-color: #242424;
+        --border-color: #363636;
+        --text-color: #e0e0e0;
+        --text-muted-color: #888888;
+        --primary-color: #db4c3f;
+        --accent-color: #34c759;
+        --danger-color: #ff3b30;
+        --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        --karma-color: #ff9900;
+        --reward-color: #007aff;
+        --easy-color: #34c759;
+        --medium-color: #ff9500;
+        --hard-color: #ff3b30;
+        --scene-color: #9370db; /* Medium Purple for Immortal Scene */
+        --venerable-scene-color: #ffd700; /* Gold for Venerable Scene */
+        --focus-color: #5e5ce6;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: var(--font-main);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        padding: 2rem;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      header {
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1.5rem;
+      }
+      header h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        letter-spacing: -1px;
+      }
+      header p {
+        font-size: 1rem;
+        color: var(--text-muted-color);
+        margin-top: 0.25rem;
+      }
+      .main-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+      .full-width-card {
+        grid-column: 1 / -1;
+      }
+      .card {
+        background-color: var(--card-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .card h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .editable {
+        min-height: 40px;
+        padding: 0.5rem;
+        border-radius: 4px;
+        outline: none;
+        transition: background-color 0.2s ease;
+      }
+      .editable:focus {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .editable[contenteditable]:empty:before {
+        content: attr(data-placeholder);
+        color: var(--text-muted-color);
+        pointer-events: none;
+      }
+      .day-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+      }
+      .tab-btn {
+        background: none;
+        border: 1px solid transparent;
+        color: var(--text-muted-color);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      .tab-btn:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+      }
+      .tab-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 700;
+      }
+      .task-list-container {
+        display: none;
+      }
+      .task-list-container.active {
+        display: block;
+      }
+      #task-input-form {
+        display: flex;
+        flex-direction: column; /* Changed */
+        gap: 0.75rem; /* Changed */
+        margin-top: 1rem;
+      }
+      .task-input-row {
+        /* New */
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      #task-input,
+      #task-benefits {
+        /* Combined */
+        flex-grow: 1;
+        width: 100%;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 0.75rem;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 1rem;
+      }
+      #task-difficulty,
+      .add-subtask-btn,
+      .action-btn {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 0.75rem;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      .task-input-row button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        font-weight: 500;
+      }
+      .task-list,
+      .sub-task-list {
+        list-style-type: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+      .sub-task-list {
+        margin-top: 0.75rem;
+        margin-left: 20px;
+        padding-left: 15px;
+        border-left: 2px solid var(--border-color);
+      }
+      .task-item-container {
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+      .task-item,
+      .sub-task-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .task-item.completed > .task-text,
+      .sub-task-item.completed > .task-text {
+        text-decoration: line-through;
+        color: var(--text-muted-color);
+        opacity: 0.7;
+      }
+      .checkbox {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--text-muted-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .completed .checkbox {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+      }
+      .completed .checkbox::after {
+        content: "✓";
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .task-text {
+        flex-grow: 1;
+        word-break: break-word;
+        cursor: pointer;
+      }
+      .item-actions {
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.2s;
+        margin-left: auto;
+      }
+      .task-item-container:hover .item-actions {
+        opacity: 1;
+      }
+      .action-btn {
+        font-size: 1rem;
+        padding: 2px 6px;
+        border: none;
+        background: none;
+        color: var(--text-muted-color);
+        cursor: pointer;
+      }
+      .action-btn:hover {
+        color: var(--text-color);
+      }
+      .focus-btn:hover {
+        color: var(--focus-color);
+      }
+      .delete-btn:hover {
+        color: var(--danger-color);
+      }
+      .difficulty-badge {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: white;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+      .difficulty-easy {
+        background-color: var(--easy-color);
+      }
+      .difficulty-medium {
+        background-color: var(--medium-color);
+      }
+      .difficulty-hard {
+        background-color: var(--hard-color);
+      }
+      .difficulty-scene {
+        background-color: var(--scene-color);
+      }
+      .difficulty-venerable-scene {
+        background-color: var(--venerable-scene-color);
+        color: #191919;
+      }
+      .benefits-toggle {
+        cursor: pointer;
+        font-style: normal;
+        padding: 0 5px;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+        user-select: none;
+      }
+      .task-item-container:hover .benefits-toggle {
+        opacity: 1;
+      }
+      .benefits-text {
+        display: none;
+        background-color: var(--bg-color);
+        border-left: 2px solid var(--karma-color);
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        margin-left: 25px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: var(--text-muted-color);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .sub-task-input-form {
+        display: none;
+        margin-top: 0.5rem;
+        margin-left: 25px;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 1rem;
+        text-align: center;
+      }
+      .stat-item h3 {
+        font-size: 0.9rem;
+        color: var(--text-muted-color);
+        font-weight: 500;
+      }
+      .stat-item .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-top: 0.25rem;
+      }
+      .stat-item .stat-value.karma,
+      .stat-item .stat-value.rank {
+        color: var(--karma-color);
+      }
+      .stat-item .stat-value.streak {
+        color: var(--danger-color);
+      }
+      .achievement-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+      .achievement-item {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        border-radius: 6px;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+      }
+      .achievement-item.unlocked {
+        opacity: 1;
+        border-left: 4px solid var(--accent-color);
+      }
+      .achievement-item h4 {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+      .achievement-item p {
+        font-size: 0.9rem;
+        color: var(--text-muted-color);
+      }
+      .reward-setup,
+      .reward-progress {
+        margin-top: 1rem;
+      }
+      #reward-goal {
+        width: 80px;
+        text-align: center;
+      }
+      .progress-bar-container {
+        width: 100%;
+        height: 12px;
+        background-color: var(--bg-color);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease-in-out;
+      }
+      #reward-progress-bar {
+        background-color: var(--reward-color);
+      }
+      .progress-text {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-muted-color);
+        margin-top: 0.5rem;
+      }
+      #claim-reward-btn,
+      .settings-btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.2s ease, opacity 0.2s ease;
+      }
+      #claim-reward-btn:disabled {
+        background-color: #333;
+        color: #777;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      #claim-reward-btn:not(:disabled) {
+        background-color: var(--reward-color);
+        color: white;
+      }
+      #focus-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .focus-list-item {
+        background-color: var(--bg-color);
+        border-left: 3px solid var(--focus-color);
+      }
+      .settings-actions {
+        display: flex;
+        gap: 1rem;
+      }
+      .settings-btn {
+        margin-top: 0;
+        flex-grow: 1;
+      }
+      .waste-essence-container {
+        margin-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+      }
+      .waste-btn {
+        background-color: var(--danger-color) !important;
+        color: white !important;
+        border: none !important;
+      }
+      #waste-essence-form {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+      .waste-input-row,
+      .waste-actions-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .waste-input-row input:first-child {
+        width: 100px;
+        flex-shrink: 0;
+      }
+      .waste-input-row input:last-child {
+        flex-grow: 1;
+      }
+      .waste-actions-row button {
+        margin-top: 0;
+        flex-grow: 1;
+      }
+      .waste-actions-row button:first-child {
+        background-color: var(--danger-color);
+        color: white;
+      }
+      .waste-actions-row button:last-child {
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>DAO OF BENEFITS</h1>
+        <p>Every action is a transaction. Calculate your gains.</p>
+      </header>
+
+      <div class="main-grid">
+        <div class="card">
+          <h2>🎯 My Grand Scheme</h2>
+          <div
+            id="objective"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What is your ultimate goal? The Immortal Venerable throne?"
+          ></div>
+        </div>
+        <div class="card">
+          <!-- NEW CARD -->
+          <h2>🎯 Short-Term Goal</h2>
+          <div
+            id="shortTermGoal"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What is the next major step in your scheme?"
+          ></div>
+        </div>
+        <div class="card">
+          <h2>❤️‍🔥 Foundation of the Dao Heart</h2>
+          <div
+            id="motivation"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What strengthens your will to persevere through tribulations?"
+          ></div>
+        </div>
+        <div class="card">
+          <h2>💀 Inner Demons & Worldly Obstacles</h2>
+          <div
+            id="distractions"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What attachments and enemies must be purged?"
+          ></div>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>🔥 Today's Focus (Top 3)</h2>
+          <div id="focus-list">
+            <p class="placeholder" style="color: var(--text-muted-color)">
+              Promote your most critical schemes here using the ⭐ icon.
+            </p>
+          </div>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>📈 Cultivation Base</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <h3>Today's Schemes</h3>
+              <p id="today-tasks" class="stat-value">0</p>
+            </div>
+            <div class="stat-item">
+              <h3>All-Time Schemes</h3>
+              <p id="all-time-tasks" class="stat-value">0</p>
+            </div>
+            <div class="stat-item">
+              <h3>Rank</h3>
+              <p id="rank" class="stat-value rank">Recruit</p>
+            </div>
+            <div class="stat-item">
+              <h3>🔥 Streak</h3>
+              <p id="streak" class="stat-value streak">0</p>
+            </div>
+            <div class="stat-item">
+              <h3>Primeval Essence</h3>
+              <p id="total-points" class="stat-value karma">0</p>
+            </div>
+          </div>
+          <div class="waste-essence-container">
+            <button id="show-waste-form-btn" class="settings-btn waste-btn">
+              Waste Essence
+            </button>
+            <div id="waste-essence-form" style="display: none">
+              <p
+                style="
+                  color: var(--text-muted-color);
+                  font-size: 0.9rem;
+                  margin-bottom: 0.75rem;
+                "
+              >
+                Deduct Primeval Essence for transgressions against your Dao.
+              </p>
+              <div class="waste-input-row">
+                <input
+                  type="number"
+                  id="waste-amount-input"
+                  placeholder="Amount"
+                  class="action-btn"
+                  min="1"
+                />
+                <input
+                  type="text"
+                  id="waste-reason-input"
+                  placeholder="Reason (e.g., procrastination)"
+                  class="action-btn"
+                />
+              </div>
+              <div class="waste-actions-row">
+                <button id="confirm-waste-btn" class="settings-btn">
+                  Confirm Deduction
+                </button>
+                <button id="cancel-waste-btn" class="settings-btn">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>🏆 Gu Refinement</h2>
+          <div
+            id="reward-text"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What Gu (reward) are you refining with this essence?"
+          ></div>
+          <div class="reward-setup">
+            <label>Requires </label
+            ><input
+              type="number"
+              id="reward-goal"
+              value="50"
+              min="1"
+              class="action-btn"
+            /><label> essence to refine.</label>
+          </div>
+          <div class="reward-progress">
+            <div class="progress-bar-container">
+              <div id="reward-progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="reward-progress-text" class="progress-text">
+              0 / 50 Essence
+            </div>
+          </div>
+          <button id="claim-reward-btn" disabled>Claim Refined Gu</button>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>🎖️ Achievements</h2>
+          <div id="achievement-grid"></div>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>⚔️ Seven Day Scheme</h2>
+          <div class="day-tabs"></div>
+          <div id="task-content"></div>
+          <form id="task-input-form">
+            <input
+              type="text"
+              id="task-input"
+              placeholder="Input a new scheme or task..."
+            />
+            <input
+              type="text"
+              id="task-benefits"
+              placeholder="Detail the benefits (e.g., gain resources, increase cultivation...)"
+            />
+            <div class="task-input-row">
+              <select id="task-difficulty" class="action-btn">
+                <option value="easy">Mortal (1 PE)</option>
+                <option value="medium" selected>Profound (5 PE)</option>
+                <option value="hard">Heavenly (10 PE)</option>
+                <option value="scene">Immortal Scene (50 PE)</option>
+                <!-- NEW -->
+                <option value="venerable-scene">
+                  Venerable Scene (100 PE)
+                </option>
+                <!-- NEW -->
+              </select>
+              <button type="submit">Add Scheme</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>🔥 Tribulation & Sacrifice</h2>
+          <div
+            id="sacrifice"
+            class="editable"
+            contenteditable="true"
+            data-placeholder="What tribulations will you endure? What worldly ties will you sever for your dao?"
+          ></div>
+        </div>
+
+        <div class="card full-width-card">
+          <h2>⚙️ Settings & Data</h2>
+          <p style="color: var(--text-muted-color); font-size: 0.9rem">
+            Backup your cultivation progress or transfer it to another vessel.
+          </p>
+          <div class="settings-actions">
+            <button
+              id="export-btn"
+              class="settings-btn"
+              style="background-color: var(--reward-color); color: white"
+            >
+              Export Data
+            </button>
+            <button
+              id="import-btn"
+              class="settings-btn"
+              style="
+                background-color: var(--card-bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--border-color);
+              "
+            >
+              Import Data
+            </button>
+            <input
+              type="file"
+              id="import-file"
+              style="display: none"
+              accept=".json"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- CONFIG & CONSTANTS ---
+        const DAYS_OF_WEEK = [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ];
+        const DIFFICULTY_POINTS = {
+          easy: 1,
+          medium: 5,
+          hard: 10,
+          scene: 50,
+          "venerable-scene": 100,
+        }; // UPDATED
+        const RANKS = [
+          { points: 0, name: "Rank 1 Novice" },
+          { points: 100, name: "Rank 2 Master" },
+          { points: 250, name: "Rank 3 Elder" },
+          { points: 500, name: "Rank 4 King" },
+          { points: 1000, name: "Rank 5 Emperor" },
+          { points: 2500, name: "Rank 6 Immortal" },
+          { points: 5000, name: "Rank 7 Venerable" },
+        ];
+        const ACHIEVEMENTS_CONFIG = {
+          first_benefit: {
+            name: "Calculating Mind",
+            description: "Define the benefits for your first scheme.",
+            condition: (data) =>
+              Object.values(data.weeklyTasks)
+                .flat()
+                .some((t) => t.benefits && t.benefits.length > 0),
+          },
+          first_task: {
+            name: "First Blood",
+            description: "Complete your first scheme.",
+            condition: (data) => data.stats.allTimeTasksCompleted >= 1,
+          },
+          ten_tasks: {
+            name: "Warrior",
+            description: "Complete 10 schemes.",
+            condition: (data) => data.stats.allTimeTasksCompleted >= 10,
+          },
+          fifty_tasks: {
+            name: "Veteran",
+            description: "Complete 50 schemes.",
+            condition: (data) => data.stats.allTimeTasksCompleted >= 50,
+          },
+          first_hard: {
+            name: "Berserker",
+            description: "Complete a Heavenly-level scheme.",
+            condition: (data) =>
+              Object.values(data.weeklyTasks)
+                .flat()
+                .some((t) => t.difficulty === "hard" && t.completed),
+          },
+          streak_7: {
+            name: "Relentless",
+            description: "Maintain a 7-day streak.",
+            condition: (data) => data.stats.streak >= 7,
+          },
+          first_reward: {
+            name: "Just Rewards",
+            description: "Refine your first Gu.",
+            condition: (data) => data.stats.rewardsClaimed >= 1,
+          },
+        };
+
+        // --- ELEMENT SELECTORS ---
+        const getEl = (id) => document.getElementById(id);
+        const objectiveEl = getEl("objective"),
+          shortTermGoalEl = getEl("shortTermGoal"), // NEW
+          motivationEl = getEl("motivation"),
+          distractionsEl = getEl("distractions"),
+          sacrificeEl = getEl("sacrifice");
+        const dayTabsContainer = document.querySelector(".day-tabs"),
+          taskContentContainer = getEl("task-content");
+        const taskForm = getEl("task-input-form"),
+          taskInput = getEl("task-input"),
+          taskBenefitsInput = getEl("task-benefits"),
+          taskDifficultyEl = getEl("task-difficulty");
+        const todayTasksEl = getEl("today-tasks"),
+          allTimeTasksEl = getEl("all-time-tasks"),
+          totalPointsEl = getEl("total-points");
+        const rewardTextEl = getEl("reward-text"),
+          rewardGoalEl = getEl("reward-goal"),
+          rewardProgressBarEl = getEl("reward-progress-bar"),
+          rewardProgressTextEl = getEl("reward-progress-text"),
+          claimRewardBtn = getEl("claim-reward-btn");
+        const focusListEl = getEl("focus-list");
+        const rankEl = getEl("rank"),
+          streakEl = getEl("streak"),
+          achievementGridEl = getEl("achievement-grid");
+        const exportBtn = getEl("export-btn"),
+          importBtn = getEl("import-btn"),
+          importFileEl = getEl("import-file");
+        const showWasteFormBtn = getEl("show-waste-form-btn"),
+          wasteEssenceForm = getEl("waste-essence-form"),
+          wasteAmountInput = getEl("waste-amount-input"),
+          wasteReasonInput = getEl("waste-reason-input"),
+          confirmWasteBtn = getEl("confirm-waste-btn"),
+          cancelWasteBtn = getEl("cancel-waste-btn");
+
+        // --- STATE MANAGEMENT ---
+        let activeDay = DAYS_OF_WEEK[0].toLowerCase();
+        let appData = {};
+        const defaultData = {
+          objective: "",
+          shortTermGoal: "", // NEW
+          motivation: "",
+          distractions: "",
+          sacrifice: "",
+          weeklyTasks: {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: [],
+          },
+          top3TaskIds: [],
+          stats: {
+            totalPoints: 0,
+            allTimeTasksCompleted: 0,
+            rewardsClaimed: 0,
+            rank: "Recruit",
+            streak: 0,
+            lastCompletedDate: null,
+            achievements: {},
+          },
+          rewardSystem: { text: "", goal: 50, progress: 0 },
+        };
+
+        // --- DATA & PERSISTENCE ---
+        const saveData = () =>
+          localStorage.setItem("attackModeDataV6", JSON.stringify(appData));
+        const loadData = () => {
+          const savedData = localStorage.getItem("attackModeDataV6");
+          appData = savedData
+            ? JSON.parse(savedData)
+            : JSON.parse(JSON.stringify(defaultData));
+
+          // Migration/Defaults for new properties
+          if (appData.shortTermGoal === undefined) appData.shortTermGoal = "";
+          if (!appData.stats.achievements) appData.stats.achievements = {};
+          if (!appData.top3TaskIds) appData.top3TaskIds = [];
+          if (!appData.stats.rewardsClaimed) appData.stats.rewardsClaimed = 0;
+          Object.values(appData.weeklyTasks).forEach((dayTasks) => {
+            dayTasks.forEach((task) => {
+              if (!task.id) task.id = Date.now() + Math.random();
+              if (!task.subtasks) task.subtasks = [];
+              if (!task.benefits) task.benefits = "";
+              task.subtasks.forEach((sub) => {
+                if (!sub.id) sub.id = Date.now() + Math.random();
+              });
+            });
+          });
+        };
+
+        // --- HELPER FUNCTIONS ---
+        const findTaskById = (id) => {
+          for (const day in appData.weeklyTasks) {
+            for (const task of appData.weeklyTasks[day]) {
+              if (task.id === id) return { task, parent: null };
+              for (const subtask of task.subtasks) {
+                if (subtask.id === id) return { task: subtask, parent: task };
+              }
+            }
+          }
+          return null;
+        };
+        const getTaskPoints = (task) => DIFFICULTY_POINTS[task.difficulty] || 0;
+
+        // --- UI RENDERING ---
+        const renderAll = () => {
+          renderAllTasks();
+          renderTop3Tasks();
+          renderStatsAndGamification();
+          renderRewardSystem();
+        };
+        const renderAllTasks = () => {
+          for (const dayKey in appData.weeklyTasks) renderTasksForDay(dayKey);
+        };
+        const renderTaskItem = (task, isSubTask = false) => {
+          const itemClass = isSubTask ? "sub-task-item" : "task-item";
+          const completedClass = task.completed ? "completed" : "";
+          const difficultyBadge = !isSubTask
+            ? `<div class="difficulty-badge difficulty-${
+                task.difficulty
+              }">${task.difficulty.replace("-", " ")}</div>` // UPDATED to handle hyphens
+            : "";
+          const focusBtn = !isSubTask
+            ? `<button class="action-btn focus-btn" data-action="focus" title="Add to Focus">⭐</button>`
+            : "";
+          const benefitsToggle =
+            !isSubTask && task.benefits
+              ? `<div class="benefits-toggle" title="Show Benefits">ℹ️</div>`
+              : "";
+          const benefitsDisplay =
+            !isSubTask && task.benefits
+              ? `<div class="benefits-text">${task.benefits}</div>`
+              : "";
+
+          return `
+            <div class="task-item-container" data-id="${task.id}">
+                <div class="${itemClass} ${completedClass}">
+                    <div class="checkbox"></div>
+                    <span class="task-text">${task.text}</span>
+                    ${benefitsToggle}
+                    ${difficultyBadge}
+                    <div class="item-actions">
+                        ${focusBtn}
+                        <button class="action-btn" data-action="add-subtask" title="Add Sub-task">➕</button>
+                        <button class="action-btn delete-btn" data-action="delete" title="Delete Task">🗑️</button>
+                    </div>
+                </div>
+                ${benefitsDisplay}
+                <div class="sub-task-input-form" id="subtask-form-${task.id}">
+                    <input type="text" placeholder="New sub-task..." class="action-btn" style="flex-grow:1;"/>
+                    <button data-action="save-subtask">Save</button>
+                </div>
+                <ul class="sub-task-list">${
+                  task.subtasks
+                    ?.map((sub) => renderTaskItem(sub, true))
+                    .join("") || ""
+                }</ul>
+            </div>`;
+        };
+        const renderTasksForDay = (dayKey) => {
+          const taskListEl = document.querySelector(
+            `#tasks-${dayKey} .task-list`
+          );
+          if (!taskListEl) return;
+          taskListEl.innerHTML = (appData.weeklyTasks[dayKey] || [])
+            .map((task) => renderTaskItem(task))
+            .join("");
+        };
+        const renderTop3Tasks = () => {
+          if (appData.top3TaskIds.length === 0) {
+            focusListEl.innerHTML = `<p class="placeholder" style="color: var(--text-muted-color);">Promote your most critical schemes here using the ⭐ icon.</p>`;
+            return;
+          }
+          focusListEl.innerHTML = appData.top3TaskIds
+            .map((id) => {
+              const result = findTaskById(id);
+              if (!result) return "";
+              const task = result.task;
+              return `<div class="task-item-container focus-list-item" data-id="${
+                task.id
+              }">
+                      <div class="task-item ${
+                        task.completed ? "completed" : ""
+                      }">
+                         <div class="checkbox"></div>
+                         <span class="task-text">${task.text}</span>
+                         <div class="difficulty-badge difficulty-${
+                           task.difficulty
+                         }">${task.difficulty.replace("-", " ")}</div>
+                         <div class="item-actions" style="opacity:1;">
+                           <button class="action-btn delete-btn" data-action="unfocus" title="Remove from Focus">❌</button>
+                         </div>
+                      </div>
+                  </div>`;
+            })
+            .join("");
+        };
+        const renderStatsAndGamification = () => {
+          const { stats } = appData;
+          const todayKey =
+            DAYS_OF_WEEK[(new Date().getDay() + 6) % 7].toLowerCase();
+          todayTasksEl.textContent = (
+            appData.weeklyTasks[todayKey] || []
+          ).filter((t) => t.completed).length;
+          allTimeTasksEl.textContent = stats.allTimeTasksCompleted;
+          totalPointsEl.textContent = stats.totalPoints;
+          rankEl.textContent = stats.rank;
+          streakEl.textContent = stats.streak;
+          achievementGridEl.innerHTML = Object.keys(ACHIEVEMENTS_CONFIG)
+            .map((key) => {
+              const ach = ACHIEVEMENTS_CONFIG[key];
+              const unlocked = stats.achievements[key];
+              return `<div class="achievement-item ${
+                unlocked ? "unlocked" : ""
+              }">
+                      <h4>${ach.name} ${unlocked ? "🏆" : ""}</h4>
+                      <p>${ach.description}</p>
+                  </div>`;
+            })
+            .join("");
+        };
+        const renderRewardSystem = () => {
+          const { rewardSystem } = appData;
+          rewardTextEl.innerHTML = rewardSystem.text || "";
+          rewardGoalEl.value = rewardSystem.goal;
+          const progress = rewardSystem.progress;
+          const goal = rewardSystem.goal;
+          const percentage =
+            goal > 0 ? Math.min((progress / goal) * 100, 100) : 0;
+          rewardProgressBarEl.style.width = `${percentage}%`;
+          rewardProgressTextEl.textContent = `${progress} / ${goal} Essence`;
+          claimRewardBtn.disabled = progress < goal;
+          if (!claimRewardBtn.disabled)
+            rewardProgressTextEl.textContent = `🎉 Gu Refinement Complete! 🎉`;
+        };
+
+        // --- CORE LOGIC ---
+        const addTask = (text, benefits, dayKey, difficulty) => {
+          if (!text.trim()) return;
+          const newTask = {
+            id: Date.now() + Math.random(),
+            text: text.trim(),
+            benefits: benefits.trim(),
+            completed: false,
+            difficulty,
+            subtasks: [],
+          };
+          appData.weeklyTasks[dayKey].push(newTask);
+          checkAchievements();
+          renderTasksForDay(dayKey);
+          saveData();
+        };
+        const addSubTask = (parentId, text) => {
+          if (!text.trim()) return;
+          const result = findTaskById(parentId);
+          if (result && result.task) {
+            const newSubTask = {
+              id: Date.now() + Math.random(),
+              text: text.trim(),
+              completed: false,
+            };
+            result.task.subtasks.push(newSubTask);
+            renderAll();
+            saveData();
+          }
+        };
+        const toggleTask = (id) => {
+          const result = findTaskById(id);
+          if (!result) return;
+          const { task, parent } = result;
+          const wasCompleted = task.completed;
+          task.completed = !task.completed;
+          if (task.subtasks)
+            task.subtasks.forEach((sub) => (sub.completed = task.completed));
+          if (parent && !task.completed) parent.completed = false;
+          if (!parent) updateStatsOnCompletion(!wasCompleted, task);
+          renderAll();
+          saveData();
+        };
+        const deleteTask = (id) => {
+          for (const day in appData.weeklyTasks) {
+            const tasks = appData.weeklyTasks[day];
+            const taskIndex = tasks.findIndex((t) => t.id === id);
+            if (taskIndex > -1) {
+              tasks.splice(taskIndex, 1);
+              appData.top3TaskIds = appData.top3TaskIds.filter(
+                (focusId) => focusId !== id
+              );
+              renderAll();
+              saveData();
+              return;
+            }
+            for (const task of tasks) {
+              const subtaskIndex = task.subtasks.findIndex((s) => s.id === id);
+              if (subtaskIndex > -1) {
+                task.subtasks.splice(subtaskIndex, 1);
+                renderAll();
+                saveData();
+                return;
+              }
+            }
+          }
+        };
+        const updateStatsOnCompletion = (isCompleting, task) => {
+          const { stats } = appData;
+          const points = getTaskPoints(task);
+          if (isCompleting) {
+            stats.totalPoints += points;
+            appData.rewardSystem.progress += points;
+            stats.allTimeTasksCompleted++;
+            checkStreak();
+          } else {
+            // UPDATED: Allow total points to go negative
+            stats.totalPoints -= points;
+            appData.rewardSystem.progress = Math.max(
+              0,
+              appData.rewardSystem.progress - points
+            );
+            stats.allTimeTasksCompleted = Math.max(
+              0,
+              stats.allTimeTasksCompleted - 1
+            );
+          }
+          checkRank();
+          checkAchievements();
+        };
+
+        // --- GAMIFICATION LOGIC ---
+        const checkStreak = () => {
+          const { stats } = appData;
+          const today = new Date().setHours(0, 0, 0, 0);
+          const lastDate = stats.lastCompletedDate
+            ? new Date(stats.lastCompletedDate).setHours(0, 0, 0, 0)
+            : null;
+          if (lastDate === today) return;
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          if (lastDate === yesterday.getTime()) {
+            stats.streak++;
+          } else {
+            stats.streak = 1;
+          }
+          stats.lastCompletedDate = today;
+        };
+        const checkRank = () => {
+          const { stats } = appData;
+          // UPDATED: Handle negative points with a special rank
+          if (stats.totalPoints < 0) {
+            stats.rank = "Qi Deviant";
+            return;
+          }
+          const currentRank = RANKS.filter(
+            (r) => r.points <= stats.totalPoints
+          ).pop();
+          if (currentRank) {
+            stats.rank = currentRank.name;
+          }
+        };
+        const checkAchievements = () => {
+          const { stats } = appData;
+          for (const key in ACHIEVEMENTS_CONFIG) {
+            if (
+              !stats.achievements[key] &&
+              ACHIEVEMENTS_CONFIG[key].condition(appData)
+            ) {
+              stats.achievements[key] = true;
+            }
+          }
+        };
+
+        // --- EVENT HANDLERS ---
+        const setupEditableFields = () => {
+          [
+            objectiveEl,
+            shortTermGoalEl,
+            motivationEl,
+            distractionsEl,
+            sacrificeEl,
+          ].forEach((el) => {
+            el.innerHTML = appData[el.id] || "";
+            el.addEventListener("input", () => {
+              appData[el.id] = el.innerHTML;
+              saveData();
+            });
+          });
+          rewardTextEl.innerHTML = appData.rewardSystem.text || "";
+          rewardTextEl.addEventListener("input", () => {
+            appData.rewardSystem.text = rewardTextEl.innerHTML;
+            saveData();
+          });
+        };
+        taskForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          addTask(
+            taskInput.value,
+            taskBenefitsInput.value,
+            activeDay,
+            taskDifficultyEl.value
+          );
+          taskInput.value = "";
+          taskBenefitsInput.value = "";
+        });
+        taskContentContainer.addEventListener("click", (e) => {
+          const target = e.target;
+          if (target.classList.contains("benefits-toggle")) {
+            const benefitsText = target.parentElement.nextElementSibling;
+            if (
+              benefitsText &&
+              benefitsText.classList.contains("benefits-text")
+            ) {
+              benefitsText.style.display =
+                benefitsText.style.display === "block" ? "none" : "block";
+            }
+            return;
+          }
+          const container = target.closest(".task-item-container");
+          if (!container) return;
+          const id = parseFloat(container.dataset.id);
+          if (
+            target.classList.contains("checkbox") ||
+            target.classList.contains("task-text")
+          ) {
+            toggleTask(id);
+          }
+          const action = target.dataset.action;
+          if (action) {
+            e.stopPropagation();
+            switch (action) {
+              case "delete":
+                deleteTask(id);
+                break;
+              case "focus":
+                if (
+                  appData.top3TaskIds.length < 3 &&
+                  !appData.top3TaskIds.includes(id)
+                ) {
+                  appData.top3TaskIds.push(id);
+                  renderTop3Tasks();
+                  saveData();
+                } else {
+                  alert("Focus list is full or scheme is already added.");
+                }
+                break;
+              case "unfocus":
+                appData.top3TaskIds = appData.top3TaskIds.filter(
+                  (focusId) => focusId !== id
+                );
+                renderTop3Tasks();
+                saveData();
+                break;
+              case "add-subtask":
+                getEl(`subtask-form-${id}`).style.display = "flex";
+                getEl(`subtask-form-${id}`).querySelector("input").focus();
+                break;
+              case "save-subtask":
+                const input = target.previousElementSibling;
+                addSubTask(id, input.value);
+                input.value = "";
+                target.parentElement.style.display = "none";
+                break;
+            }
+          }
+        });
+        rewardGoalEl.addEventListener("input", () => {
+          const goal = parseInt(rewardGoalEl.value, 10);
+          appData.rewardSystem.goal = isNaN(goal) || goal < 1 ? 1 : goal;
+          renderRewardSystem();
+          saveData();
+        });
+        claimRewardBtn.addEventListener("click", () => {
+          alert(
+            `The Gu has been refined. You obtained your reward:\n\n${appData.rewardSystem.text.replace(
+              /<[^>]*>?/gm,
+              ""
+            )}`
+          );
+          appData.rewardSystem.progress = 0;
+          appData.stats.rewardsClaimed++;
+          checkAchievements();
+          renderRewardSystem();
+          saveData();
+        });
+        exportBtn.addEventListener("click", () => {
+          const dataStr = JSON.stringify(appData, null, 2);
+          const blob = new Blob([dataStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `dao-of-benefits-backup-${
+            new Date().toISOString().split("T")[0]
+          }.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+        importBtn.addEventListener("click", () => importFileEl.click());
+        importFileEl.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              if (
+                confirm(
+                  "This will overwrite your current cultivation. Are you sure?"
+                )
+              ) {
+                localStorage.setItem("attackModeDataV6", event.target.result);
+                location.reload();
+              }
+            } catch (err) {
+              alert("Error parsing file. The external data is corrupted.");
+            }
+          };
+          reader.readAsText(file);
+        });
+
+        showWasteFormBtn.addEventListener("click", () => {
+          wasteEssenceForm.style.display = "flex";
+          showWasteFormBtn.style.display = "none";
+        });
+        cancelWasteBtn.addEventListener("click", () => {
+          wasteEssenceForm.style.display = "none";
+          showWasteFormBtn.style.display = "block";
+          wasteAmountInput.value = "";
+          wasteReasonInput.value = "";
+        });
+        confirmWasteBtn.addEventListener("click", () => {
+          const amount = parseInt(wasteAmountInput.value, 10);
+          const reason = wasteReasonInput.value.trim() || "unspecified reasons";
+
+          if (isNaN(amount) || amount <= 0) {
+            alert("Please enter a valid amount of essence to waste.");
+            return;
+          }
+
+          if (
+            confirm(
+              `Are you sure you want to waste ${amount} Primeval Essence for: ${reason}? This may result in an essence debt and impact your rank.`
+            )
+          ) {
+            appData.stats.totalPoints -= amount;
+            appData.rewardSystem.progress = Math.max(
+              0,
+              appData.rewardSystem.progress - amount
+            );
+
+            checkRank(); // Rank might drop
+            renderStatsAndGamification();
+            renderRewardSystem();
+            saveData();
+
+            cancelWasteBtn.click();
+          }
+        });
+
+        // --- INITIALIZATION ---
+        const init = () => {
+          loadData();
+          setupEditableFields();
+          const todayIndex = (new Date().getDay() + 6) % 7;
+          let initialActiveDay = DAYS_OF_WEEK[todayIndex].toLowerCase();
+          dayTabsContainer.innerHTML = DAYS_OF_WEEK.map(
+            (day) =>
+              `<button class="tab-btn" data-day="${day.toLowerCase()}">${day}</button>`
+          ).join("");
+          taskContentContainer.innerHTML = DAYS_OF_WEEK.map(
+            (day) =>
+              `<div class="task-list-container" id="tasks-${day.toLowerCase()}"><ul class="task-list"></ul></div>`
+          ).join("");
+          const savedActiveDay = localStorage.getItem("activeDay");
+          if (
+            savedActiveDay &&
+            DAYS_OF_WEEK.map((d) => d.toLowerCase()).includes(savedActiveDay)
+          ) {
+            initialActiveDay = savedActiveDay;
+          }
+          dayTabsContainer.addEventListener("click", (e) => {
+            if (e.target.classList.contains("tab-btn")) {
+              activeDay = e.target.dataset.day;
+              localStorage.setItem("activeDay", activeDay);
+              document
+                .querySelectorAll(".tab-btn")
+                .forEach((btn) =>
+                  btn.classList.toggle("active", btn.dataset.day === activeDay)
+                );
+              document
+                .querySelectorAll(".task-list-container")
+                .forEach((pane) =>
+                  pane.classList.toggle(
+                    "active",
+                    pane.id === `tasks-${activeDay}`
+                  )
+                );
+            }
+          });
+          document
+            .querySelector(`.tab-btn[data-day="${initialActiveDay}"]`)
+            .click();
+          renderAll();
+        };
+        init();
+      });
+    </script>
+  </body>
+</html>
